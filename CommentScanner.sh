@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts "hu:ecps" flag; do
+while getopts "hu:ecpsr" flag; do
  case $flag in
    h)
    echo CommentScanner is a short script for finding information within web pages.
@@ -14,6 +14,7 @@ while getopts "hu:ecps" flag; do
    echo '-c    Search for credentials'
    echo '-p    Search for phone numbers'
    echo '-s    Search for source files'
+   echo '-r    Search for refernces'
    echo 
    echo Usage
    echo 'CommentScanner -u http://{site}        HTML CSS JS comments'
@@ -44,6 +45,10 @@ while getopts "hu:ecps" flag; do
    s)
    echo; echo 'POSSIBLE SOURCE FILES:  '
    curl -k -s -L --user-agent firefox $url | grep -P -i -n --color 'src='
+   ;;
+   r)
+   echo; echo 'POSSIBLE REFERENCES:  '
+   curl -k -s -L --user-agent firefox $url | grep -P -o -i -n --color '(?<=href\=\").+?(?=\")'
    ;;
    \?)
    echo 'Invalid flag usage! Please use -h to learn more!'
