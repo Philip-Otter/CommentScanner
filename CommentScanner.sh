@@ -40,11 +40,11 @@ while getopts "hu:ecpsr" flag; do
    ;;
    p)
    echo; echo 'POSSIBLE PHONE NUMBERS:  '
-   curl -k -s -L --user-agent firefox $url | grep -P -i -n --color '\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\)\s\d\d\d-\d\d\d\d' 
+   curl -k -s -L --user-agent firefox $url | grep -P -o -i -n --color '\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\)\s\d\d\d-\d\d\d\d' 
    ;;
    s)
    echo; echo 'POSSIBLE SOURCE FILES:  '
-   curl -k -s -L --user-agent firefox $url | grep -P -i -n --color 'src='
+   curl -k -s -L --user-agent firefox $url | grep -P -o -i -n --color '(?<=src\=\").+?(?=\")'
    ;;
    r)
    echo; echo 'POSSIBLE REFERENCES:  '
