@@ -23,27 +23,27 @@ while getopts "hu:ecps" flag; do
    u)
    url=$OPTARG
    echo 'HTML COMMENTS:  '
-   curl -s -L --user-agent firefox $url | grep -n '<!--'
+   curl -k -s -L --user-agent firefox $url | grep -n '<!--'
    echo; echo 'JAVASCRIPT COMMENTS:  '
-   curl -s -L --user-agent firefox $url | grep '//' | grep -v 'http://' | grep -v -n 'https://'
+   curl -k -s -L --user-agent firefox $url | grep '//' | grep -v 'http://' | grep -v -n 'https://'
    echo; echo 'CSS COMMENTS:  '
-   curl -s -L --user-agent firefox $url | grep -n '/\*'
+   curl -k -s -L --user-agent firefox $url | grep -n '/\*'
    ;;
    e)
    echo; echo 'POSSIBLE EMAILS:  '
-   curl -s -L --user-agent firefox $url | grep -P -i -o -n '[-A-Za-z0-9!#$%&'"'"'*+/=?^_`{|}~]+(?:\.[-A-Za-z0-9!#$%&'"'"'*+/=?^_`{|}~]+)*@(?:[A-Za-z0-9](?:[-A-Za-z0-9]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[-A-Za-z0-9]*[A-Za-z0-9])?'
+   curl -k -s -L --user-agent firefox $url | grep -P -i -o -n '[-A-Za-z0-9!#$%&'"'"'*+/=?^_`{|}~]+(?:\.[-A-Za-z0-9!#$%&'"'"'*+/=?^_`{|}~]+)*@(?:[A-Za-z0-9](?:[-A-Za-z0-9]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[-A-Za-z0-9]*[A-Za-z0-9])?'
    ;;
    c)
    echo; echo 'POSSIBLE CREDENTIALS:  '
-   curl -s -L --user-agent firefox $url | grep -i -E -n -C 2 --color 'username|password|logon|login|credentials|admin'
+   curl -k -s -L --user-agent firefox $url | grep -i -E -n -C 2 --color 'username|password|logon|login|credentials|admin'
    ;;
    p)
    echo; echo 'POSSIBLE PHONE NUMBERS:  '
-   curl -s -L --user-agent firefox $url | grep -P -i -n --color '\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\)\s\d\d\d-\d\d\d\d' 
+   curl -k -s -L --user-agent firefox $url | grep -P -i -n --color '\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\)\s\d\d\d-\d\d\d\d' 
    ;;
    s)
    echo; echo 'POSSIBLE SOURCE FILES:  '
-   curl -s -L --user-agent firefox $url | grep -P -i -n --color 'src='
+   curl -k -s -L --user-agent firefox $url | grep -P -i -n --color 'src='
    ;;
    \?)
    echo 'Invalid flag usage! Please use -h to learn more!'
