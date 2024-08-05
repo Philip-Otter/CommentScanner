@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 
 	"github.com/fatih/color"
@@ -33,8 +34,51 @@ type target struct {
 	CurrentDepth int  `default:"1"`
 }
 
+func get_HTML_Comments(textBlock string) {
+	commentRegex, _ := regexp.Compile(`(?s)\<\!\-\-.+?\-\-\>`)
+	commentList := commentRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("| ")
+	color.Yellow("HTML COMMENTS:  ")
+	for _, item := range commentList {
+		fmt.Print("|#")
+		color.Red(item)
+	}
+}
+
+func get_CSS_Comments(textBlock string) {
+	commentRegex, _ := regexp.Compile(`(?s)\/\*.+?\*/`)
+	commentList := commentRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("| ")
+	color.Yellow("CSS COMMENTS:  ")
+	for _, item := range commentList {
+		fmt.Print("|#")
+		color.Red(item)
+	}
+}
+
+func get_JS_Comments(textBlock string) {
+	inlineCommentRegex, _ := regexp.Compile(`[^:\\]\/\/.+`)
+	inlineCommentList := inlineCommentRegex.FindAllString(textBlock, -1)
+
+	blockCommentRegex, _ := regexp.Compile(`(?s)\/\*.+?\*\/`)
+	blockCommentList := blockCommentRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("| ")
+	color.Yellow("JS COMMENTS:  ")
+	for _, item := range inlineCommentList {
+		fmt.Print("|#")
+		color.Red(item)
+	}
+	for _, item := range blockCommentList {
+		fmt.Print("|#")
+		color.Red(item)
+	}
+}
+
 func search(targetptr *target, workerptr *int, maxWorkers int) {
-	fmt.Println("Searching")
+	color.Cyan(*&targetptr.URL)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -48,7 +92,14 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	if err != nil {
 		log.Print(err)
 	}
-	fmt.Println(string(body))
+
+	rawFile := string(body)
+
+	if !*&targetptr.DisableBasic {
+		get_HTML_Comments(rawFile)
+		get_CSS_Comments(rawFile)
+		get_JS_Comments(rawFile)
+	}
 }
 
 func main() {
@@ -58,7 +109,7 @@ func main() {
 	╚═╝└─┘┴ ┴┴ ┴└─┘┘└┘ ┴   ╚═╝└─┘┴ ┴┘└┘┘└┘└─┘┴└─
 				by The 2xdropout
 					2024`
-	seperator := "============================================================="
+	seperator := "========================================================================================"
 
 	// required flags
 	urlFlagptr := flag.String("u", "", "The target URL")
