@@ -5,8 +5,12 @@ An application to quickly pull out comments and other information from a webpage
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -31,6 +35,20 @@ type target struct {
 
 func search(targetptr *target, workerptr *int, maxWorkers int) {
 	fmt.Println("Searching")
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	response, err := client.Get(*&targetptr.URL)
+	if err != nil {
+		log.Print(err)
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Print(err)
+	}
+	fmt.Println(string(body))
 }
 
 func main() {
@@ -105,8 +123,6 @@ func main() {
 		UserAgent:     *userAgentFlagptr,
 		ReportingMode: *reportingModeFlagptr,
 	}
-
-	fmt.Println(rootTarget)
 
 	search(&rootTarget, currentWorkersptr, *workersFlagptr)
 }
