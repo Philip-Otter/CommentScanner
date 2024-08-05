@@ -20,6 +20,7 @@ type target struct {
 	FindPhone     bool
 	FindSources   bool
 	FindRefs      bool
+	DisableBasic  bool
 	MaxDepth      int
 	UserAgent     string
 	ReportingMode string
@@ -49,6 +50,7 @@ func main() {
 	phoneFlagptr := flag.Bool("p", false, "Search for credentials")
 	sourceFlageptr := flag.Bool("s", false, "Search for source files")
 	referenceFlagptr := flag.Bool("r", false, "Search for references")
+	noBasicFlagptr := flag.Bool("noBasic", false, "Disable basic comment scanning (HTML/CSS/JS)")
 	// Configuration flags
 	depthFlagptr := flag.Int("depth", 1, "Link and reference scanning depth")
 	workersFlagptr := flag.Int("workers", 10, "Concurrent scanning and parsing workers")
@@ -74,6 +76,9 @@ func main() {
 	}
 	if *referenceFlagptr {
 		color.Green("Find Reference Files:  	" + strconv.FormatBool(*referenceFlagptr))
+	}
+	if *noBasicFlagptr {
+		color.Green("No HTML/CSS/JS Scan:	" + strconv.FormatBool(*noBasicFlagptr))
 	}
 
 	color.Green("Number Of Workers:  	" + strconv.Itoa(*workersFlagptr))
