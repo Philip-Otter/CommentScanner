@@ -89,6 +89,18 @@ func get_emails(textBlock string) {
 	}
 }
 
+func get_phone_numbers(textBlock string) {
+	phoneNumberRegex, _ := regexp.Compile(`\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\)\s\d\d\d-\d\d\d\d`)
+	phoneNumberList := phoneNumberRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("| ")
+	color.Yellow("Possible Phone Numbers")
+	for _, item := range phoneNumberList {
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+}
+
 func search(targetptr *target, workerptr *int, maxWorkers int) {
 	seperatorString := "----------------------------------------------------------------------------------------"
 	fmt.Println(seperatorString)
@@ -117,6 +129,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	}
 	if *&targetptr.FindEmail {
 		get_emails(rawFile)
+	}
+	if *&targetptr.FindPhone {
+		get_phone_numbers(rawFile)
 	}
 }
 
