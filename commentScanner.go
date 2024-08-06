@@ -42,7 +42,7 @@ func get_HTML_Comments(textBlock string) {
 	color.Yellow("HTML COMMENTS:  ")
 	for _, item := range commentList {
 		fmt.Print("|#")
-		color.Red(item)
+		color.Cyan(item)
 	}
 }
 
@@ -54,7 +54,7 @@ func get_CSS_Comments(textBlock string) {
 	color.Yellow("CSS COMMENTS:  ")
 	for _, item := range commentList {
 		fmt.Print("|#")
-		color.Red(item)
+		color.Cyan(item)
 	}
 }
 
@@ -69,16 +69,19 @@ func get_JS_Comments(textBlock string) {
 	color.Yellow("JS COMMENTS:  ")
 	for _, item := range inlineCommentList {
 		fmt.Print("|#")
-		color.Red(item)
+		color.Cyan(item)
 	}
 	for _, item := range blockCommentList {
 		fmt.Print("|#")
-		color.Red(item)
+		color.Cyan(item)
 	}
 }
 
 func search(targetptr *target, workerptr *int, maxWorkers int) {
-	color.Cyan(*&targetptr.URL)
+	seperatorString := "----------------------------------------------------------------------------------------"
+	fmt.Println(seperatorString)
+	color.Red(*&targetptr.URL)
+	fmt.Println(seperatorString)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
