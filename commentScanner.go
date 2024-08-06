@@ -173,6 +173,7 @@ func main() {
 		FindPhone:     *phoneFlagptr,
 		FindSources:   *sourceFlageptr,
 		FindRefs:      *referenceFlagptr,
+		DisableBasic:  *noBasicFlagptr,
 		MaxDepth:      *depthFlagptr,
 		UserAgent:     *userAgentFlagptr,
 		ReportingMode: *reportingModeFlagptr,
