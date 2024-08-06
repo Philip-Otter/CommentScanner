@@ -77,6 +77,18 @@ func get_JS_Comments(textBlock string) {
 	}
 }
 
+func get_emails(textBlock string) {
+	emailRegex, _ := regexp.Compile(`[a-zA-Z0-9#$%&'*+-/=?^_\|{}~]+?\@[a-zA-Z0-9\.]+\.[a-z]+[^\s0-9"<!@#$%^&*(){}>;',.]`)
+	emailList := emailRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("| ")
+	color.Yellow("Possible Emails")
+	for _, item := range emailList {
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+}
+
 func search(targetptr *target, workerptr *int, maxWorkers int) {
 	seperatorString := "----------------------------------------------------------------------------------------"
 	fmt.Println(seperatorString)
@@ -102,6 +114,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 		get_HTML_Comments(rawFile)
 		get_CSS_Comments(rawFile)
 		get_JS_Comments(rawFile)
+	}
+	if *&targetptr.FindEmail {
+		get_emails(rawFile)
 	}
 }
 
