@@ -101,6 +101,19 @@ func get_phone_numbers(textBlock string) {
 	}
 }
 
+// Currently Broken. Come back and fix regex
+func get_creds(textBlock string) {
+	credRegex, _ := regexp.Compile(`.+[pass|cred|db\_|admin|login|logon].+`)
+	credList := credRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("|")
+	color.Yellow("Possible Credentials")
+	for _, item := range credList {
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+}
+
 func search(targetptr *target, workerptr *int, maxWorkers int) {
 	seperatorString := "----------------------------------------------------------------------------------------"
 	fmt.Println(seperatorString)
@@ -133,6 +146,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	if *&targetptr.FindPhone {
 		get_phone_numbers(rawFile)
 	}
+	if *&targetptr.FindCreds {
+		get_creds(rawFile)
+	}
 }
 
 func main() {
@@ -148,7 +164,7 @@ func main() {
 	urlFlagptr := flag.String("u", "", "The target URL")
 	// Optional content searching flags
 	emailFlagptr := flag.Bool("e", false, "Search for emails")
-	credentialFlagptr := flag.Bool("c", false, "Search for credentials")
+	credentialFlagptr := flag.Bool("c", false, "Search for credentials [broken]")
 	phoneFlagptr := flag.Bool("p", false, "Search for credentials")
 	sourceFlageptr := flag.Bool("s", false, "Search for source files")
 	referenceFlagptr := flag.Bool("r", false, "Search for references")
