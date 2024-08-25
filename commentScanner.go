@@ -14,6 +14,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -107,8 +108,24 @@ func get_creds(textBlock string) {
 	credList := credRegex.FindAllString(textBlock, -1)
 
 	fmt.Print("|")
-	color.Yellow("Possible Credentials")
+	color.Yellow(" Possible Credentials")
 	for _, item := range credList {
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+}
+
+func get_sources(textBlock string) {
+	sourceRegex, _ := regexp.Compile(`src="[//:.\-a-zA-Z0-9]+"`)
+	sourceList := sourceRegex.FindAllString(textBlock, -1)
+	trimLeft := `src="`
+	trimRight := `"*`
+
+	fmt.Print("|")
+	color.Yellow(" Possible Sources")
+	for _, item := range sourceList {
+		item = strings.TrimLeft(item, trimLeft)
+		item = strings.TrimRight(item, trimRight)
 		fmt.Print("|#")
 		color.Cyan(item)
 	}
@@ -149,6 +166,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	if *&targetptr.FindCreds {
 		get_creds(rawFile)
 	}
+	if *&targetptr.FindSources {
+		get_sources(rawFile)
+	}
 }
 
 func main() {
@@ -165,7 +185,7 @@ func main() {
 	// Optional content searching flags
 	emailFlagptr := flag.Bool("e", false, "Search for emails")
 	credentialFlagptr := flag.Bool("c", false, "Search for credentials [broken]")
-	phoneFlagptr := flag.Bool("p", false, "Search for credentials")
+	phoneFlagptr := flag.Bool("p", false, "Search for phone numbers")
 	sourceFlageptr := flag.Bool("s", false, "Search for source files")
 	referenceFlagptr := flag.Bool("r", false, "Search for references")
 	noBasicFlagptr := flag.Bool("noBasic", false, "Disable basic comment scanning (HTML/CSS/JS)")
