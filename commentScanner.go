@@ -131,6 +131,24 @@ func get_sources(textBlock string) {
 	}
 }
 
+func get_references(textBlock string) {
+	refRegex, _ := regexp.Compile(`ref="[//:.\-a-zA-Z0-9]+"`)
+	refList := refRegex.FindAllString(textBlock, -1)
+	trimLeft := `ref="`
+	trimRight := `"*`
+
+	color.Yellow(" Possible References")
+
+	fmt.Print("|")
+	color.Yellow(" Possible Sources")
+	for _, item := range refList {
+		item = strings.TrimLeft(item, trimLeft)
+		item = strings.TrimRight(item, trimRight)
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+}
+
 func search(targetptr *target, workerptr *int, maxWorkers int) {
 	seperatorString := "----------------------------------------------------------------------------------------"
 	fmt.Println(seperatorString)
@@ -168,6 +186,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	}
 	if *&targetptr.FindSources {
 		get_sources(rawFile)
+	}
+	if *&targetptr.FindRefs {
+		get_references(rawFile)
 	}
 }
 
