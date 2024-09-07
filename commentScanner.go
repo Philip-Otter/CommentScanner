@@ -26,6 +26,7 @@ type target struct {
 	FindPhone     bool
 	FindSources   bool
 	FindRefs      bool
+	FindHidden    bool
 	DisableBasic  bool
 	MaxDepth      int
 	UserAgent     string
@@ -137,16 +138,27 @@ func get_references(textBlock string) {
 	trimLeft := `ref="`
 	trimRight := `"*`
 
-	color.Yellow(" Possible References")
-
 	fmt.Print("|")
-	color.Yellow(" Possible Sources")
+	color.Yellow(" Possible References")
 	for _, item := range refList {
 		item = strings.TrimLeft(item, trimLeft)
 		item = strings.TrimRight(item, trimRight)
 		fmt.Print("|#")
 		color.Cyan(item)
 	}
+}
+
+func find_hidden(textBlock string) {
+	hiddenElsRegex, _ := regexp.Compile(`\<.*(visibility|display)[:=][ ]*(none|hidden).*\>`)
+	hiddenList := hiddenElsRegex.FindAllString(textBlock, -1)
+
+	fmt.Print("|")
+	color.Yellow(" Possible Hidden Elements")
+	for _, item := range hiddenList {
+		fmt.Print("|#")
+		color.Cyan(item)
+	}
+
 }
 
 func search(targetptr *target, workerptr *int, maxWorkers int) {
@@ -190,6 +202,9 @@ func search(targetptr *target, workerptr *int, maxWorkers int) {
 	if *&targetptr.FindRefs {
 		get_references(rawFile)
 	}
+	if *&targetptr.FindHidden {
+		find_hidden(rawFile)
+	}
 }
 
 func main() {
@@ -210,6 +225,7 @@ func main() {
 	sourceFlageptr := flag.Bool("s", false, "Search for source files")
 	referenceFlagptr := flag.Bool("r", false, "Search for references")
 	noBasicFlagptr := flag.Bool("noBasic", false, "Disable basic comment scanning (HTML/CSS/JS)")
+	hiddenElementsFlagptr := flag.Bool("hiddenElements", false, "Search for hidden elements")
 	// Configuration flags
 	depthFlagptr := flag.Int("depth", 1, "Link and reference scanning depth")
 	workersFlagptr := flag.Int("workers", 10, "Concurrent scanning and parsing workers")
@@ -239,6 +255,9 @@ func main() {
 	if *noBasicFlagptr {
 		color.Green("No HTML/CSS/JS Scan:	" + strconv.FormatBool(*noBasicFlagptr))
 	}
+	if *hiddenElementsFlagptr {
+		color.Green("Find Hidden Elements:  	" + strconv.FormatBool(*hiddenElementsFlagptr))
+	}
 
 	color.Green("Number Of Workers:  	" + strconv.Itoa(*workersFlagptr))
 	color.Green("Scanning Depth:  	" + strconv.Itoa(*depthFlagptr))
@@ -260,6 +279,7 @@ func main() {
 		FindPhone:     *phoneFlagptr,
 		FindSources:   *sourceFlageptr,
 		FindRefs:      *referenceFlagptr,
+		FindHidden:    *hiddenElementsFlagptr,
 		DisableBasic:  *noBasicFlagptr,
 		MaxDepth:      *depthFlagptr,
 		UserAgent:     *userAgentFlagptr,
